@@ -12,14 +12,15 @@ sudo systemctl enable docker
 
 echo "🟢 Installing Git, curl, and yarn..."
 sudo apt install -y git curl
-# Install yarn repo and yarn itself
 curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 sudo apt update -y
 sudo apt install -y yarn
 
 echo "🟢 Cloning Aztec Protocol repo..."
-git clone https://github.com/AztecProtocol/aztec-packages.git
+if [ ! -d "aztec-packages" ]; then
+  git clone https://github.com/AztecProtocol/aztec-packages.git
+fi
 cd aztec-packages
 
 echo "📦 Installing packages (may take time)..."
