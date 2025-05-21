@@ -1,30 +1,28 @@
-#!binbash
+#!/bin/bash
+set -e
 
-echo 🟢 System Update & Dependencies...
-sudo apt update && sudo apt upgrade -y
-sudo apt install -y curl git build-essential unzip tmux
+echo "🟢 System Update"
+sudo apt update -y
+sudo apt upgrade -y
 
-echo 🐳 Installing Docker...
-curl -fsSL httpsget.docker.com -o get-docker.sh && sh get-docker.sh
+echo "🐳 Installing Docker..."
+curl -fsSL https://get.docker.com | sudo bash
 sudo systemctl start docker
 sudo systemctl enable docker
 
-echo 🟢 Installing Node.js v18 & Yarn...
-curl -fsSL httpsdeb.nodesource.comsetup_18.x  sudo -E bash -
-sudo apt install -y nodejs
-npm install --global yarn
+echo "🟢 Installing Git, curl, and yarn..."
+sudo apt install -y git curl
+# Install yarn repo and yarn itself
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+sudo apt update -y
+sudo apt install -y yarn
 
-echo 📦 Cloning Aztec Protocol...
-git clone httpsgithub.comAztecProtocolaztec-packages.git
+echo "🟢 Cloning Aztec Protocol repo..."
+git clone https://github.com/AztecProtocol/aztec-packages.git
 cd aztec-packages
-git checkout master
 
-echo 📦 Installing packages (may take time)...
-yarn
+echo "📦 Installing packages (may take time)..."
+yarn install
 
-echo 🚀 Starting Aztec Sequencer in tmux session...
-cd yarn-projectend-to-end
-tmux new-session -d -s aztec 'yarn start sequencer'
-
-echo ✅ Aztec Sequencer is running in background inside 'tmux' session named 'aztec'
-echo 👉 Run this to check logs tmux attach -t aztec
+echo "✅ Setup complete! You can now run the node."
